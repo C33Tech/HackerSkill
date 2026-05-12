@@ -24,17 +24,28 @@ challenges: Hack The Box, TryHackMe, CTFs, and any authorized black-box target.
 
 ## Architecture
 
-A single skill `pwn-challenge` installed at `~/.claude/skills/pwn-challenge/`:
+The skill and its slash command ship together as a **Claude Code plugin** so
+users can install with one command and receive updates. Repo layout:
 
 ```
-~/.claude/skills/pwn-challenge/
-├── SKILL.md                       # main instructions Claude follows
-├── references/
-│   ├── playbook.md                # service & context technique reference
-│   └── target-template.md         # markdown template for a new target
-~/.claude/commands/
-└── pwn.md                         # /pwn slash command
+HackerSkill/                                # the plugin / repo root
+├── .claude-plugin/
+│   └── plugin.json                         # plugin manifest
+├── skills/
+│   └── pwn-challenge/
+│       ├── SKILL.md                        # main instructions
+│       └── references/
+│           ├── playbook.md                 # service/context reference
+│           └── target-template.md          # new-target template
+├── commands/
+│   └── pwn.md                              # /pwn slash command
+├── README.md                               # install + usage docs
+└── docs/superpowers/specs/                 # design docs (this file)
 ```
+
+When installed via the plugin system, Claude Code auto-discovers `skills/` and
+`commands/` from the plugin root, so the user does not manually copy files into
+`~/.claude/`.
 
 State for each engagement lives in the user's current working directory:
 
@@ -242,6 +253,43 @@ target is not an authorized lab/CTF/engagement. The user states the platform
 context. If the user attempts to point the skill at a real-world IP outside
 known lab ranges and does not state explicit written authorization, the skill
 asks before proceeding.
+
+## Installation & Distribution
+
+Packaged as a Claude Code plugin. The repo itself is the plugin source.
+
+**Manifest** (`.claude-plugin/plugin.json`):
+
+```json
+{
+  "name": "pwn-challenge",
+  "version": "0.1.0",
+  "description": "Full-lifecycle coach for HTB, THM, and CTF challenges with tiered hints, per-target notes, and safe auto-enumeration.",
+  "author": "mike@c33tech.com"
+}
+```
+
+**User install flow:**
+
+1. Add the marketplace (the GitHub repo hosting this plugin) to Claude Code:
+   ```
+   /plugin marketplace add <github-user>/HackerSkill
+   ```
+2. Install the plugin:
+   ```
+   /plugin install pwn-challenge
+   ```
+3. Restart Claude Code (or reload plugins) so the skill and `/pwn` command
+   register.
+
+**Updates:** users run `/plugin update pwn-challenge` to pull new versions;
+`version` in `plugin.json` is bumped per release.
+
+**Uninstall:** `/plugin uninstall pwn-challenge`.
+
+The README in the repo root documents the install steps, lists requirements
+(nmap, gobuster, etc. on PATH), and gives a quick-start example
+(`/pwn lame 10.10.10.3`).
 
 ## Open Questions
 
