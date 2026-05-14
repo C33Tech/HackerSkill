@@ -141,6 +141,8 @@ section headers:
   `### SNMP`, `### NFS`.
 - `### Linux privilege escalation`, `### Windows privilege escalation`,
   `### Active Directory attack paths`, `### Web vulnerability classes`.
+- `### Metasploit` (under `## Frameworks`) — workflow, aux scanners, payloads,
+  handlers, msfvenom, post-exploitation.
 
 For specific CVEs, exploits, or current syntax not in the playbook, prefer:
 

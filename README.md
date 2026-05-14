@@ -38,6 +38,7 @@ The plugin shells out to standard offensive-security tools. Have these on your
 - `evil-winrm` (for WinRM targets)
 - `impacket-*` suite (for Kerberos / AD)
 - `hashcat` or `john` (for cracking)
+- `metasploit-framework` (`msfconsole`, `msfvenom`) — for guided exploitation, aux scanners, handlers, and post-exploitation
 
 The skill works without all of them — it just won't run the missing tools.
 
