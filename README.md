@@ -20,7 +20,7 @@ of getting handed the solution.
 
 ```text
 /plugin marketplace add C33Tech/HackerSkill
-/plugin install pwn-challenge@HackerSkill
+/plugin install pwn-challenge@C33Tech-HackerSkill
 ```
 
 Restart Claude Code (or reload plugins) so the skill and `/pwn` command
