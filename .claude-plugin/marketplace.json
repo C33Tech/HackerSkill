@@ -1,0 +1,22 @@
+{
+  "name": "C33Tech-HackerSkill",
+  "owner": {
+    "name": "Mike Flynn",
+    "email": "mike@c33tech.com"
+  },
+  "metadata": {
+    "description": "InfoSec and CTF coaching skills for Claude Code",
+    "version": "0.1.0"
+  },
+  "plugins": [
+    {
+      "name": "pwn-challenge",
+      "source": {
+        "source": "url",
+        "url": "https://github.com/C33Tech/HackerSkill.git"
+      },
+      "description": "Full-lifecycle coach for HTB, TryHackMe, and CTF challenges with tiered hints, per-target notes, and safe auto-enumeration.",
+      "version": "0.1.0"
+    }
+  ]
+}
